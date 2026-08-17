@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Search, User, ShoppingBag, Menu, X, ArrowUpRight } from 'lucide-react';
 
 function useCountdown(targetTime) {
@@ -18,34 +18,142 @@ function useCountdown(targetTime) {
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
-const NAV_LINKS = [
-  { label: 'HOME', id: 'home' },
-  { label: 'CAPSULE 001', id: 'capsule' },
-  { label: 'VOTE NOW', id: 'vote', cta: true },
-  { label: 'PTB MERCH', id: 'merch' },
-  { label: 'OPEN CALL', id: 'open-call' },
-  { label: 'ABOUT', id: 'about' },
-];
-
-const STEPS = [
-  { n: '01', title: 'YOU CHOOSE THE CONCEPT.', body: 'Cada cápsula arranca con una votación abierta a toda la comunidad.' },
-  { n: '02', title: 'ARTISTS CREATE.', body: 'Diseñadores presentan propuestas privadas a partir del concepto ganador.' },
-  { n: '03', title: 'YOU VOTE.', body: 'La comunidad elige, entre tres finalistas, cuál se convierte en realidad.' },
-  { n: '04', title: 'WE MAKE IT REAL.', body: 'PTB produce la colección ganadora y abre el drop limitado.' },
-];
-
 const FINALISTS = [
   { key: 'A', artist: 'SOFÍA REYES', name: 'STATIC' },
   { key: 'B', artist: 'MATEO DUARTE', name: 'DRIFT' },
   { key: 'C', artist: 'LUNA ITO', name: 'ECHO' },
 ];
 
-const CORE_PRODUCTS = [
-  { name: 'PTB OVERSIZED TEE', price: '$45', art: 'tee-oversized' },
-  { name: 'PTB REGULAR TEE', price: '$40', art: 'tee-regular' },
-  { name: 'PTB CAP', price: '$32', art: 'cap' },
-  { name: 'PTB SOCKS', price: '$18', art: 'socks' },
-];
+const STRINGS = {
+  es: {
+    nav: [
+      { label: 'INICIO', id: 'home' },
+      { label: 'CÁPSULA 001', id: 'capsule' },
+      { label: 'VOTÁ AHORA', id: 'vote', cta: true },
+      { label: 'TIENDA PTB', id: 'merch' },
+      { label: 'CONVOCATORIA', id: 'open-call' },
+      { label: 'NOSOTROS', id: 'about' },
+    ],
+    steps: [
+      { n: '01', title: 'VOS ELEGÍS EL CONCEPTO.', body: 'Cada cápsula arranca con una votación abierta a toda la comunidad.' },
+      { n: '02', title: 'LOS ARTISTAS CREAN.', body: 'Diseñadores presentan propuestas privadas a partir del concepto ganador.' },
+      { n: '03', title: 'VOS VOTÁS.', body: 'La comunidad elige, entre tres finalistas, cuál se convierte en realidad.' },
+      { n: '04', title: 'LO HACEMOS REALIDAD.', body: 'PTB produce la colección ganadora y abre el drop limitado.' },
+    ],
+    products: [
+      { name: 'REMERA PTB OVERSIZED', price: '$45', art: 'tee-oversized' },
+      { name: 'REMERA PTB REGULAR', price: '$40', art: 'tee-regular' },
+      { name: 'GORRA PTB', price: '$32', art: 'cap' },
+      { name: 'MEDIAS PTB', price: '$18', art: 'socks' },
+    ],
+    footerCols: [
+      { title: 'TIENDA', links: ['Tienda', 'Cápsulas', 'Merch'] },
+      { title: 'COMUNIDAD', links: ['Votá Ahora', 'Convocatoria', 'Artistas', 'Archivo'] },
+      { title: 'INFO', links: ['Nosotros', 'Preguntas Frecuentes', 'Envíos', 'Cambios'] },
+      { title: 'LEGAL', links: ['Términos y Condiciones', 'Política de Privacidad', 'Términos de Convocatoria'] },
+    ],
+    heroEyebrow: 'CÁPSULA 001 · FASE 03 / VOTACIÓN FINAL',
+    heroH1: ['LA MARCA', 'LA CREÁS', 'VOS.'],
+    heroSub: 'Los artistas crean. Vos decidís. Nosotros lo hacemos realidad.',
+    ctaExplore: 'VER CÁPSULA 001',
+    ctaVote: 'VOTÁ AHORA',
+    tickerTitle: 'VOTACIÓN EN VIVO',
+    tickerLive: 'AL AIRE',
+    tickerVotes: 'VOTOS HASTA AHORA',
+    tickerResults: 'RESULTADOS',
+    tickerHidden: 'OCULTOS HASTA EL CIERRE',
+    howEyebrow: 'CÓMO FUNCIONA PTB',
+    howTitle: 'De la idea de la comunidad al producto final.',
+    capsuleEyebrow: 'CÁPSULA ACTUAL',
+    capsuleTitle: 'PTB CÁPSULA 001',
+    capsuleLabel: 'CÁPSULA 001',
+    capsuleParticipants: '18.291 PERSONAS PARTICIPARON.',
+    capsuleCta: 'VER CÁPSULA',
+    voteEyebrow: 'LA VOTACIÓN ESTÁ ABIERTA',
+    voteTitle: 'Elegí qué diseño se convierte en CÁPSULA 001.',
+    votedSuffix: 'PERSONAS YA VOTARON',
+    voteSelectPrompt: 'SELECCIONÁ UN FINALISTA',
+    voteForPrefix: 'VOTAR POR',
+    coreTitle: 'Piezas permanentes. Puerta de entrada a la comunidad.',
+    coreCta: 'COMPRAR PTB',
+    communityEyebrow: 'COMUNIDAD',
+    communityTitle: ['PTB NO ES UNA AUDIENCIA.', 'ES UNA COMUNIDAD.'],
+    nlEyebrow: 'SUMATE A PTB',
+    nlTitle: 'Sé parte de la próxima decisión.',
+    nlBody: 'Enterate primero de cada votación, convocatoria y lanzamiento.',
+    nlPlaceholder: 'TU EMAIL',
+    nlButton: 'SUMARME',
+    nlConfirm: 'YA ESTÁS ADENTRO. BIENVENIDO A PTB.',
+    footerTagline: 'LA MARCA LA CREÁS VOS.',
+    copyright: '© 2026 PTB. TODOS LOS DERECHOS RESERVADOS.',
+    ariaSearch: 'Buscar', ariaAccount: 'Cuenta', ariaCart: 'Carrito', ariaMenu: 'Menú', ariaClose: 'Cerrar',
+    localeCode: 'es-AR',
+  },
+  en: {
+    nav: [
+      { label: 'HOME', id: 'home' },
+      { label: 'CAPSULE 001', id: 'capsule' },
+      { label: 'VOTE NOW', id: 'vote', cta: true },
+      { label: 'PTB MERCH', id: 'merch' },
+      { label: 'OPEN CALL', id: 'open-call' },
+      { label: 'ABOUT', id: 'about' },
+    ],
+    steps: [
+      { n: '01', title: 'YOU CHOOSE THE CONCEPT.', body: 'Each capsule starts with a vote open to the whole community.' },
+      { n: '02', title: 'ARTISTS CREATE.', body: 'Designers submit private proposals based on the winning concept.' },
+      { n: '03', title: 'YOU VOTE.', body: 'The community chooses, among three finalists, which one becomes real.' },
+      { n: '04', title: 'WE MAKE IT REAL.', body: 'PTB produces the winning collection and opens the limited drop.' },
+    ],
+    products: [
+      { name: 'PTB OVERSIZED TEE', price: '$45', art: 'tee-oversized' },
+      { name: 'PTB REGULAR TEE', price: '$40', art: 'tee-regular' },
+      { name: 'PTB CAP', price: '$32', art: 'cap' },
+      { name: 'PTB SOCKS', price: '$18', art: 'socks' },
+    ],
+    footerCols: [
+      { title: 'SHOP', links: ['Shop', 'Capsules', 'Merch'] },
+      { title: 'COMMUNITY', links: ['Vote Now', 'Open Call', 'Artists', 'Archive'] },
+      { title: 'INFO', links: ['About', 'FAQ', 'Shipping', 'Returns'] },
+      { title: 'LEGAL', links: ['Terms & Conditions', 'Privacy Policy', 'Open Call Terms'] },
+    ],
+    heroEyebrow: 'CAPSULE 001 · PHASE 03 / FINAL VOTE',
+    heroH1: ['YOU CREATE', 'THE BRAND.'],
+    heroSub: 'Artists create. You decide. We make it real.',
+    ctaExplore: 'EXPLORE CAPSULE 001',
+    ctaVote: 'VOTE NOW',
+    tickerTitle: 'LIVE VOTE',
+    tickerLive: 'ON AIR',
+    tickerVotes: 'VOTES SO FAR',
+    tickerResults: 'RESULTS',
+    tickerHidden: 'HIDDEN UNTIL CLOSE',
+    howEyebrow: 'HOW PTB WORKS',
+    howTitle: "From the community's idea to the final product.",
+    capsuleEyebrow: 'CURRENT CAPSULE',
+    capsuleTitle: 'PTB CAPSULE 001',
+    capsuleLabel: 'CAPSULE 001',
+    capsuleParticipants: '18,291 PEOPLE PARTICIPATED.',
+    capsuleCta: 'VIEW CAPSULE',
+    voteEyebrow: 'THE VOTE IS OPEN',
+    voteTitle: 'Choose which design becomes CAPSULE 001.',
+    votedSuffix: 'PEOPLE HAVE VOTED',
+    voteSelectPrompt: 'SELECT A FINALIST',
+    voteForPrefix: 'VOTE FOR',
+    coreTitle: 'Permanent pieces. The entry point to the community.',
+    coreCta: 'SHOP PTB',
+    communityEyebrow: 'COMMUNITY',
+    communityTitle: ['PTB IS NOT AN AUDIENCE.', "IT'S A COMMUNITY."],
+    nlEyebrow: 'JOIN PTB',
+    nlTitle: 'Be part of the next decision.',
+    nlBody: 'Be the first to know about every vote, open call and drop.',
+    nlPlaceholder: 'YOUR EMAIL',
+    nlButton: 'JOIN',
+    nlConfirm: "YOU'RE IN. WELCOME TO PTB.",
+    footerTagline: 'YOU CREATE THE BRAND.',
+    copyright: '© 2026 PTB. ALL RIGHTS RESERVED.',
+    ariaSearch: 'Search', ariaAccount: 'Account', ariaCart: 'Cart', ariaMenu: 'Menu', ariaClose: 'Close',
+    localeCode: 'en-US',
+  },
+};
 
 function ProductArt({ type }) {
   const stroke = 'rgba(242,240,234,0.45)';
@@ -89,14 +197,29 @@ function ProductArt({ type }) {
   );
 }
 
-const FOOTER_COLS = [
-  { title: 'SHOP', links: ['Shop', 'Capsules', 'Merch'] },
-  { title: 'COMMUNITY', links: ['Vote Now', 'Open Call', 'Artists', 'Archive'] },
-  { title: 'INFO', links: ['About', 'FAQ', 'Shipping', 'Returns'] },
-  { title: 'LEGAL', links: ['Terms & Conditions', 'Privacy Policy', 'Open Call Terms'] },
-];
+function FlagAR({ size = 18 }) {
+  return (
+    <svg width={size} height={size * 0.67} viewBox="0 0 30 20" aria-hidden="true">
+      <rect width="30" height="20" fill="#74ACDF" />
+      <rect y="6.5" width="30" height="7" fill="#F6F6F6" />
+      <circle cx="15" cy="10" r="2.3" fill="#F6B40E" stroke="#85340A" strokeWidth="0.4" />
+    </svg>
+  );
+}
+
+function FlagUS({ size = 18 }) {
+  const stripeH = 20 / 13;
+  return (
+    <svg width={size} height={size * 0.67} viewBox="0 0 30 20" aria-hidden="true">
+      <rect width="30" height="20" fill="#B22234" />
+      {[1, 3, 5, 7, 9, 11].map(i => <rect key={i} y={i * stripeH} width="30" height={stripeH} fill="#FFFFFF" />)}
+      <rect width="13" height={stripeH * 7} fill="#3C3B6E" />
+    </svg>
+  );
+}
 
 export default function PTBHome() {
+  const [lang, setLang] = useState('es');
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -105,6 +228,12 @@ export default function PTBHome() {
   const [voteCount, setVoteCount] = useState(12492);
   const [target] = useState(() => Date.now() + (2 * 86400000 + 14 * 3600000 + 32 * 60000));
   const { d, h, m, s } = useCountdown(target);
+  const t = STRINGS[lang];
+  const votes = voteCount.toLocaleString(t.localeCode);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -154,6 +283,12 @@ export default function PTBHome() {
           background-size:56px 56px;
         }
 
+        .ptb-lang-bar{ display:flex; justify-content:flex-end; align-items:center; gap:4px; padding:8px 24px; border-bottom:1px solid rgba(242,240,234,.08); }
+        .ptb-lang-btn{ display:flex; align-items:center; gap:6px; background:none; border:none; color:var(--ash); cursor:pointer; padding:4px 8px; opacity:.5; transition:opacity .2s; font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.05em; }
+        .ptb-lang-btn.active{ opacity:1; color:var(--white); }
+        .ptb-lang-btn:hover{ opacity:.85; }
+        .ptb-lang-btn svg{ display:block; border-radius:2px; }
+
         .ptb-header{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:18px 24px; transition:all .3s ease; border-bottom:1px solid transparent; }
         .ptb-header.scrolled{ background:rgba(8,8,8,.86); backdrop-filter:blur(10px); border-bottom-color:rgba(242,240,234,.08); }
         .ptb-logo{ font-family:'Unbounded',sans-serif; font-weight:900; font-size:1.25rem; letter-spacing:.02em; }
@@ -176,7 +311,7 @@ export default function PTBHome() {
         .ptb-eyebrow{ display:flex; align-items:center; gap:10px; font-size:.68rem; color:var(--ash); margin-bottom:28px; }
         .ptb-dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); animation:pulse 1.8s infinite; flex:none; }
         @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
-        .ptb-hero h1{ font-size:clamp(2.6rem,7.2vw,5.6rem); margin:0 0 28px; max-width:14ch; }
+        .ptb-hero h1{ font-size:clamp(2.6rem,7.2vw,5.6rem); margin:0 0 28px; max-width:16ch; }
         .ptb-hero .sub{ color:var(--ash); font-size:clamp(.85rem,1.3vw,1rem); letter-spacing:.06em; text-transform:uppercase; max-width:38ch; margin-bottom:36px; }
         .ptb-cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
         .ptb-btn{ font-family:'Inter',sans-serif; font-size:.78rem; letter-spacing:.09em; padding:15px 26px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; transition:all .25s ease; text-decoration:none; border-radius:1px; }
@@ -256,25 +391,34 @@ export default function PTBHome() {
         .ptb-footer-bottom a:hover{ color:var(--white); }
       `}</style>
 
+      <div className="ptb-lang-bar">
+        <button className={`ptb-lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')} aria-pressed={lang === 'es'}>
+          <FlagAR size={18} /><span>ES</span>
+        </button>
+        <button className={`ptb-lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')} aria-pressed={lang === 'en'}>
+          <FlagUS size={18} /><span>EN</span>
+        </button>
+      </div>
+
       <header className={`ptb-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="ptb-logo">PTB</div>
         <nav className="ptb-nav">
-          {NAV_LINKS.map(l => (
+          {t.nav.map(l => (
             <a key={l.id} href={`#${l.id}`} className={`ptb-nav-link ${l.cta ? 'cta' : ''}`}>{l.label}</a>
           ))}
         </nav>
         <div className="ptb-icons">
-          <button className="ptb-icon-btn" aria-label="Buscar"><Search size={17} /></button>
-          <button className="ptb-icon-btn" aria-label="Cuenta"><User size={17} /></button>
-          <button className="ptb-icon-btn" aria-label="Carrito"><ShoppingBag size={17} /></button>
-          <button className="ptb-icon-btn ptb-menu-toggle" aria-label="Menú" onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
+          <button className="ptb-icon-btn" aria-label={t.ariaSearch}><Search size={17} /></button>
+          <button className="ptb-icon-btn" aria-label={t.ariaAccount}><User size={17} /></button>
+          <button className="ptb-icon-btn" aria-label={t.ariaCart}><ShoppingBag size={17} /></button>
+          <button className="ptb-icon-btn ptb-menu-toggle" aria-label={t.ariaMenu} onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
         </div>
       </header>
 
       {menuOpen && (
         <div className="ptb-mobile-menu">
-          <button className="ptb-icon-btn" style={{ position: 'absolute', top: 24, right: 24 }} onClick={() => setMenuOpen(false)} aria-label="Cerrar"><X size={26} /></button>
-          {NAV_LINKS.map(l => (
+          <button className="ptb-icon-btn" style={{ position: 'absolute', top: 24, right: 24 }} onClick={() => setMenuOpen(false)} aria-label={t.ariaClose}><X size={26} /></button>
+          {t.nav.map(l => (
             <a key={l.id} href={`#${l.id}`} className="ptb-mobile-link" onClick={() => setMenuOpen(false)} style={l.cta ? { color: 'var(--accent)' } : undefined}>{l.label}</a>
           ))}
         </div>
@@ -285,26 +429,30 @@ export default function PTBHome() {
           <div>
             <div className="ptb-eyebrow">
               <span className="ptb-dot" />
-              <span className="ptb-mono">CAPSULE 001 · PHASE 03 / FINAL VOTE</span>
+              <span className="ptb-mono">{t.heroEyebrow}</span>
             </div>
-            <h1 className="ptb-display">LA MARCA<br />LA CREÁS<br />VOS.</h1>
-            <p className="sub">Artists create. You decide. We make it real.</p>
+            <h1 className="ptb-display">
+              {t.heroH1.map((line, i) => (
+                <Fragment key={i}>{line}{i < t.heroH1.length - 1 && <br />}</Fragment>
+              ))}
+            </h1>
+            <p className="sub">{t.heroSub}</p>
             <div className="ptb-cta-row">
-              <a href="#capsule" className="ptb-btn ptb-btn-primary">EXPLORE CAPSULE 001 <ArrowUpRight size={15} /></a>
-              <a href="#vote" className="ptb-btn ptb-btn-outline">VOTE NOW</a>
+              <a href="#capsule" className="ptb-btn ptb-btn-primary">{t.ctaExplore} <ArrowUpRight size={15} /></a>
+              <a href="#vote" className="ptb-btn ptb-btn-outline">{t.ctaVote}</a>
             </div>
           </div>
 
           <div className="ptb-ticker">
             <div className="ptb-ticker-head">
-              <span className="ptb-ticker-title ptb-mono">LIVE VOTE</span>
-              <span className="ptb-ticker-live ptb-mono"><span className="ptb-dot" /> ON AIR</span>
+              <span className="ptb-ticker-title ptb-mono">{t.tickerTitle}</span>
+              <span className="ptb-ticker-live ptb-mono"><span className="ptb-dot" /> {t.tickerLive}</span>
             </div>
             <div className="ptb-ticker-candidates">
               {FINALISTS.map(f => <div key={f.key} className="ptb-ticker-candidate">{f.key}</div>)}
             </div>
-            <div className="ptb-ticker-row"><span>VOTES SO FAR</span><b>{voteCount.toLocaleString('en-US')}</b></div>
-            <div className="ptb-ticker-row"><span>RESULTS</span><b>HIDDEN UNTIL CLOSE</b></div>
+            <div className="ptb-ticker-row"><span>{t.tickerVotes}</span><b>{votes}</b></div>
+            <div className="ptb-ticker-row"><span>{t.tickerResults}</span><b>{t.tickerHidden}</b></div>
             <div className="ptb-ticker-cd">
               <span>{pad(d)}D</span><span>{pad(h)}H</span><span>{pad(m)}M</span><span>{pad(s)}S</span>
             </div>
@@ -313,38 +461,38 @@ export default function PTBHome() {
       </section>
 
       <section className="ptb-section">
-        <div className="ptb-eyebrow-line">HOW PTB WORKS</div>
-        <h2 className="ptb-display">De la idea de la comunidad al producto final.</h2>
+        <div className="ptb-eyebrow-line">{t.howEyebrow}</div>
+        <h2 className="ptb-display">{t.howTitle}</h2>
         <div className="ptb-steps">
-          {STEPS.map(s => (
-            <div key={s.n} className="ptb-step">
-              <div className="num">{s.n}</div>
-              <div className="stitle">{s.title}</div>
-              <div className="sbody">{s.body}</div>
+          {t.steps.map(st => (
+            <div key={st.n} className="ptb-step">
+              <div className="num">{st.n}</div>
+              <div className="stitle">{st.title}</div>
+              <div className="sbody">{st.body}</div>
             </div>
           ))}
         </div>
       </section>
 
       <section id="capsule" className="ptb-section">
-        <div className="ptb-eyebrow-line">CURRENT CAPSULE</div>
-        <h2 className="ptb-display">PTB CAPSULE 001</h2>
+        <div className="ptb-eyebrow-line">{t.capsuleEyebrow}</div>
+        <h2 className="ptb-display">{t.capsuleTitle}</h2>
         <div className="ptb-capsule-card">
           <div className="ptb-capsule-visual"><span>001</span></div>
           <div>
-            <div className="ptb-mono" style={{ fontSize: '.7rem', color: 'var(--ash)', marginBottom: 14 }}>CAPSULE 001</div>
+            <div className="ptb-mono" style={{ fontSize: '.7rem', color: 'var(--ash)', marginBottom: 14 }}>{t.capsuleLabel}</div>
             <div className="ptb-display" style={{ fontSize: '2.6rem', marginBottom: 22 }}>CHAOS</div>
-            <p className="ptb-mono" style={{ color: 'var(--ash)', fontSize: '.8rem', marginBottom: 30 }}>18,291 PEOPLE PARTICIPATED.</p>
-            <a href="#capsule" className="ptb-btn ptb-btn-outline">VIEW CAPSULE <ArrowUpRight size={15} /></a>
+            <p className="ptb-mono" style={{ color: 'var(--ash)', fontSize: '.8rem', marginBottom: 30 }}>{t.capsuleParticipants}</p>
+            <a href="#capsule" className="ptb-btn ptb-btn-outline">{t.capsuleCta} <ArrowUpRight size={15} /></a>
           </div>
         </div>
       </section>
 
       <section id="vote" className="ptb-section">
-        <div className="ptb-eyebrow-line">THE VOTE IS OPEN</div>
-        <h2 className="ptb-display">Elegí qué diseño se convierte en CAPSULE 001.</h2>
+        <div className="ptb-eyebrow-line">{t.voteEyebrow}</div>
+        <h2 className="ptb-display">{t.voteTitle}</h2>
         <div className="ptb-vote-meta">
-          <div className="ptb-mono" style={{ fontSize: '.75rem', color: 'var(--ash)' }}>{voteCount.toLocaleString('en-US')} PEOPLE HAVE VOTED</div>
+          <div className="ptb-mono" style={{ fontSize: '.75rem', color: 'var(--ash)' }}>{votes} {t.votedSuffix}</div>
           <div style={{ display: 'flex', gap: 6 }}>
             {[['D', d], ['H', h], ['M', m], ['S', s]].map(([label, val]) => (
               <span key={label} className="ptb-mono" style={{ fontSize: '.75rem', background: 'rgba(242,240,234,.06)', padding: '6px 9px' }}>{pad(val)}{label}</span>
@@ -365,16 +513,16 @@ export default function PTBHome() {
         </div>
         <div style={{ marginTop: 28 }}>
           <button className="ptb-btn ptb-btn-primary" disabled={!selected}>
-            {selected ? `VOTE FOR ${selected}` : 'SELECCIONÁ UN FINALISTA'}
+            {selected ? `${t.voteForPrefix} ${selected}` : t.voteSelectPrompt}
           </button>
         </div>
       </section>
 
       <section id="merch" className="ptb-section">
         <div className="ptb-eyebrow-line">PTB CORE</div>
-        <h2 className="ptb-display">Piezas permanentes. Puerta de entrada a la comunidad.</h2>
+        <h2 className="ptb-display">{t.coreTitle}</h2>
         <div className="ptb-core-grid">
-          {CORE_PRODUCTS.map(p => (
+          {t.products.map(p => (
             <div key={p.name} className="ptb-product-card">
               <div className="ptb-product-visual"><ProductArt type={p.art} /></div>
               <div className="ptb-product-name">{p.name}</div>
@@ -383,29 +531,33 @@ export default function PTBHome() {
           ))}
         </div>
         <div style={{ marginTop: 36 }}>
-          <a href="#merch" className="ptb-btn ptb-btn-outline">SHOP PTB <ArrowUpRight size={15} /></a>
+          <a href="#merch" className="ptb-btn ptb-btn-outline">{t.coreCta} <ArrowUpRight size={15} /></a>
         </div>
       </section>
 
       <section id="open-call" className="ptb-section">
-        <div className="ptb-eyebrow-line">COMMUNITY</div>
-        <h2 className="ptb-display">PTB IS NOT AN AUDIENCE.<br />IT'S A COMMUNITY.</h2>
+        <div className="ptb-eyebrow-line">{t.communityEyebrow}</div>
+        <h2 className="ptb-display">
+          {t.communityTitle.map((line, i) => (
+            <Fragment key={i}>{line}{i < t.communityTitle.length - 1 && <br />}</Fragment>
+          ))}
+        </h2>
         <div className="ptb-community-grid">
           {Array.from({ length: 6 }).map((_, i) => <div key={i} className="ptb-ugc-tile" />)}
         </div>
       </section>
 
       <section id="about" className="ptb-newsletter">
-        <div className="ptb-mono" style={{ fontSize: '.7rem', color: 'var(--ash)' }}>JOIN PTB</div>
-        <h2 className="ptb-display">Be part of the next decision.</h2>
-        <p>Enterate primero de cada votación, open call y drop.</p>
+        <div className="ptb-mono" style={{ fontSize: '.7rem', color: 'var(--ash)' }}>{t.nlEyebrow}</div>
+        <h2 className="ptb-display">{t.nlTitle}</h2>
+        <p>{t.nlBody}</p>
         {!joined ? (
           <form className="ptb-nl-form" onSubmit={handleJoin}>
-            <input type="email" placeholder="TU EMAIL" value={email} onChange={e => setEmail(e.target.value)} required />
-            <button type="submit">JOIN</button>
+            <input type="email" placeholder={t.nlPlaceholder} value={email} onChange={e => setEmail(e.target.value)} required />
+            <button type="submit">{t.nlButton}</button>
           </form>
         ) : (
-          <div className="ptb-mono" style={{ color: 'var(--accent)', fontSize: '.85rem' }}>YOU'RE IN. WELCOME TO PTB.</div>
+          <div className="ptb-mono" style={{ color: 'var(--accent)', fontSize: '.85rem' }}>{t.nlConfirm}</div>
         )}
       </section>
 
@@ -413,9 +565,9 @@ export default function PTBHome() {
         <div className="ptb-footer-grid">
           <div>
             <div className="ptb-logo" style={{ marginBottom: 16 }}>PTB</div>
-            <p style={{ color: 'var(--ash)', fontSize: '.8rem', maxWidth: '26ch' }}>LA MARCA LA CREÁS VOS.</p>
+            <p style={{ color: 'var(--ash)', fontSize: '.8rem', maxWidth: '26ch' }}>{t.footerTagline}</p>
           </div>
-          {FOOTER_COLS.map(col => (
+          {t.footerCols.map(col => (
             <div key={col.title} className="ptb-footer-col">
               <h4>{col.title}</h4>
               {col.links.map(l => <a key={l} href="#">{l}</a>)}
@@ -423,7 +575,7 @@ export default function PTBHome() {
           ))}
         </div>
         <div className="ptb-footer-bottom">
-          <span>© 2026 PTB. ALL RIGHTS RESERVED.</span>
+          <span>{t.copyright}</span>
           <div style={{ display: 'flex', gap: 18 }}>
             <a href="#">INSTAGRAM</a>
             <a href="#">TIKTOK</a>
