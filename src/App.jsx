@@ -1,5 +1,18 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Search, User, ShoppingBag, Menu, X, ArrowUpRight } from 'lucide-react';
+import { supabase } from './lib/supabase';
+
+const DEFAULT_PRODUCTS = [
+  { id: 'tee-oversized', name_es: 'REMERA PTB OVERSIZED', name_en: 'PTB OVERSIZED TEE', price: '$45', image_url: null },
+  { id: 'tee-regular', name_es: 'REMERA PTB REGULAR', name_en: 'PTB REGULAR TEE', price: '$40', image_url: null },
+  { id: 'cap', name_es: 'GORRA PTB', name_en: 'PTB CAP', price: '$32', image_url: null },
+  { id: 'socks', name_es: 'MEDIAS PTB', name_en: 'PTB SOCKS', price: '$18', image_url: null },
+];
+const DEFAULT_CAPSULE = { name: 'CHAOS', phase_es: 'FASE 03 / VOTACIÓN FINAL', phase_en: 'PHASE 03 / FINAL VOTE', participants: 18291, image_url: null };
+const DEFAULT_HERO = {
+  title_es: 'LA MARCA LA CREÁS VOS.', title_en: 'YOU CREATE THE BRAND.',
+  subtitle_es: 'Los artistas crean. Vos decidís. Nosotros lo hacemos realidad.', subtitle_en: 'Artists create. You decide. We make it real.',
+};
 
 function useCountdown(targetTime) {
   const [now, setNow] = useState(() => Date.now());
@@ -40,21 +53,13 @@ const STRINGS = {
       { n: '03', title: 'VOS VOTÁS.', body: 'La comunidad elige, entre tres finalistas, cuál se convierte en realidad.' },
       { n: '04', title: 'LO HACEMOS REALIDAD.', body: 'PTB produce la colección ganadora y abre el drop limitado.' },
     ],
-    products: [
-      { name: 'REMERA PTB OVERSIZED', price: '$45', art: 'tee-oversized' },
-      { name: 'REMERA PTB REGULAR', price: '$40', art: 'tee-regular' },
-      { name: 'GORRA PTB', price: '$32', art: 'cap' },
-      { name: 'MEDIAS PTB', price: '$18', art: 'socks' },
-    ],
     footerCols: [
       { title: 'TIENDA', links: ['Tienda', 'Cápsulas', 'Merch'] },
       { title: 'COMUNIDAD', links: ['Votá Ahora', 'Convocatoria', 'Artistas', 'Archivo'] },
       { title: 'INFO', links: ['Nosotros', 'Preguntas Frecuentes', 'Envíos', 'Cambios'] },
       { title: 'LEGAL', links: ['Términos y Condiciones', 'Política de Privacidad', 'Términos de Convocatoria'] },
     ],
-    heroEyebrow: 'CÁPSULA 001 · FASE 03 / VOTACIÓN FINAL',
-    heroH1: ['LA MARCA', 'LA CREÁS', 'VOS.'],
-    heroSub: 'Los artistas crean. Vos decidís. Nosotros lo hacemos realidad.',
+    heroEyebrowLabel: 'CÁPSULA 001',
     ctaExplore: 'VER CÁPSULA 001',
     ctaVote: 'VOTÁ AHORA',
     tickerTitle: 'VOTACIÓN EN VIVO',
@@ -67,7 +72,7 @@ const STRINGS = {
     capsuleEyebrow: 'CÁPSULA ACTUAL',
     capsuleTitle: 'PTB CÁPSULA 001',
     capsuleLabel: 'CÁPSULA 001',
-    capsuleParticipants: '18.291 PERSONAS PARTICIPARON.',
+    participantsSuffix: 'PERSONAS PARTICIPARON.',
     capsuleCta: 'VER CÁPSULA',
     voteEyebrow: 'LA VOTACIÓN ESTÁ ABIERTA',
     voteTitle: 'Elegí qué diseño se convierte en CÁPSULA 001.',
@@ -104,21 +109,13 @@ const STRINGS = {
       { n: '03', title: 'YOU VOTE.', body: 'The community chooses, among three finalists, which one becomes real.' },
       { n: '04', title: 'WE MAKE IT REAL.', body: 'PTB produces the winning collection and opens the limited drop.' },
     ],
-    products: [
-      { name: 'PTB OVERSIZED TEE', price: '$45', art: 'tee-oversized' },
-      { name: 'PTB REGULAR TEE', price: '$40', art: 'tee-regular' },
-      { name: 'PTB CAP', price: '$32', art: 'cap' },
-      { name: 'PTB SOCKS', price: '$18', art: 'socks' },
-    ],
     footerCols: [
       { title: 'SHOP', links: ['Shop', 'Capsules', 'Merch'] },
       { title: 'COMMUNITY', links: ['Vote Now', 'Open Call', 'Artists', 'Archive'] },
       { title: 'INFO', links: ['About', 'FAQ', 'Shipping', 'Returns'] },
       { title: 'LEGAL', links: ['Terms & Conditions', 'Privacy Policy', 'Open Call Terms'] },
     ],
-    heroEyebrow: 'CAPSULE 001 · PHASE 03 / FINAL VOTE',
-    heroH1: ['YOU CREATE', 'THE BRAND.'],
-    heroSub: 'Artists create. You decide. We make it real.',
+    heroEyebrowLabel: 'CAPSULE 001',
     ctaExplore: 'EXPLORE CAPSULE 001',
     ctaVote: 'VOTE NOW',
     tickerTitle: 'LIVE VOTE',
@@ -131,7 +128,7 @@ const STRINGS = {
     capsuleEyebrow: 'CURRENT CAPSULE',
     capsuleTitle: 'PTB CAPSULE 001',
     capsuleLabel: 'CAPSULE 001',
-    capsuleParticipants: '18,291 PEOPLE PARTICIPATED.',
+    participantsSuffix: 'PEOPLE PARTICIPATED.',
     capsuleCta: 'VIEW CAPSULE',
     voteEyebrow: 'THE VOTE IS OPEN',
     voteTitle: 'Choose which design becomes CAPSULE 001.',
@@ -228,12 +225,32 @@ export default function PTBHome() {
   const [voteCount, setVoteCount] = useState(12492);
   const [target] = useState(() => Date.now() + (2 * 86400000 + 14 * 3600000 + 32 * 60000));
   const { d, h, m, s } = useCountdown(target);
+  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+  const [capsule, setCapsule] = useState(DEFAULT_CAPSULE);
+  const [hero, setHero] = useState(DEFAULT_HERO);
   const t = STRINGS[lang];
   const votes = voteCount.toLocaleString(t.localeCode);
+  const phase = lang === 'es' ? capsule.phase_es : capsule.phase_en;
+  const heroTitle = lang === 'es' ? hero.title_es : hero.title_en;
+  const heroSub = lang === 'es' ? hero.subtitle_es : hero.subtitle_en;
 
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    async function loadContent() {
+      const [{ data: p }, { data: c }, { data: h }] = await Promise.all([
+        supabase.from('ptb_products').select('*').order('sort_order'),
+        supabase.from('ptb_capsule').select('*').eq('id', 1).single(),
+        supabase.from('ptb_hero_content').select('*').eq('id', 1).single(),
+      ]);
+      if (p && p.length) setProducts(p);
+      if (c) setCapsule(c);
+      if (h) setHero(h);
+    }
+    loadContent();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -429,14 +446,10 @@ export default function PTBHome() {
           <div>
             <div className="ptb-eyebrow">
               <span className="ptb-dot" />
-              <span className="ptb-mono">{t.heroEyebrow}</span>
+              <span className="ptb-mono">{t.heroEyebrowLabel} · {phase}</span>
             </div>
-            <h1 className="ptb-display">
-              {t.heroH1.map((line, i) => (
-                <Fragment key={i}>{line}{i < t.heroH1.length - 1 && <br />}</Fragment>
-              ))}
-            </h1>
-            <p className="sub">{t.heroSub}</p>
+            <h1 className="ptb-display">{heroTitle}</h1>
+            <p className="sub">{heroSub}</p>
             <div className="ptb-cta-row">
               <a href="#capsule" className="ptb-btn ptb-btn-primary">{t.ctaExplore} <ArrowUpRight size={15} /></a>
               <a href="#vote" className="ptb-btn ptb-btn-outline">{t.ctaVote}</a>
@@ -478,11 +491,13 @@ export default function PTBHome() {
         <div className="ptb-eyebrow-line">{t.capsuleEyebrow}</div>
         <h2 className="ptb-display">{t.capsuleTitle}</h2>
         <div className="ptb-capsule-card">
-          <div className="ptb-capsule-visual"><span>001</span></div>
+          <div className="ptb-capsule-visual">
+            {capsule.image_url ? <img src={capsule.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span>001</span>}
+          </div>
           <div>
             <div className="ptb-mono" style={{ fontSize: '.7rem', color: 'var(--ash)', marginBottom: 14 }}>{t.capsuleLabel}</div>
-            <div className="ptb-display" style={{ fontSize: '2.6rem', marginBottom: 22 }}>CHAOS</div>
-            <p className="ptb-mono" style={{ color: 'var(--ash)', fontSize: '.8rem', marginBottom: 30 }}>{t.capsuleParticipants}</p>
+            <div className="ptb-display" style={{ fontSize: '2.6rem', marginBottom: 22 }}>{capsule.name}</div>
+            <p className="ptb-mono" style={{ color: 'var(--ash)', fontSize: '.8rem', marginBottom: 30 }}>{capsule.participants.toLocaleString(t.localeCode)} {t.participantsSuffix}</p>
             <a href="#capsule" className="ptb-btn ptb-btn-outline">{t.capsuleCta} <ArrowUpRight size={15} /></a>
           </div>
         </div>
@@ -522,10 +537,12 @@ export default function PTBHome() {
         <div className="ptb-eyebrow-line">PTB CORE</div>
         <h2 className="ptb-display">{t.coreTitle}</h2>
         <div className="ptb-core-grid">
-          {t.products.map(p => (
-            <div key={p.name} className="ptb-product-card">
-              <div className="ptb-product-visual"><ProductArt type={p.art} /></div>
-              <div className="ptb-product-name">{p.name}</div>
+          {products.map(p => (
+            <div key={p.id} className="ptb-product-card">
+              <div className="ptb-product-visual">
+                {p.image_url ? <img src={p.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ProductArt type={p.id} />}
+              </div>
+              <div className="ptb-product-name">{lang === 'es' ? p.name_es : p.name_en}</div>
               <div className="ptb-product-price">{p.price}</div>
             </div>
           ))}
