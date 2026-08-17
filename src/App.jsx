@@ -41,11 +41,53 @@ const FINALISTS = [
 ];
 
 const CORE_PRODUCTS = [
-  { name: 'PTB OVERSIZED TEE', price: '$45' },
-  { name: 'PTB REGULAR TEE', price: '$40' },
-  { name: 'PTB CAP', price: '$32' },
-  { name: 'PTB SOCKS', price: '$18' },
+  { name: 'PTB OVERSIZED TEE', price: '$45', art: 'tee-oversized' },
+  { name: 'PTB REGULAR TEE', price: '$40', art: 'tee-regular' },
+  { name: 'PTB CAP', price: '$32', art: 'cap' },
+  { name: 'PTB SOCKS', price: '$18', art: 'socks' },
 ];
+
+function ProductArt({ type }) {
+  const stroke = 'rgba(242,240,234,0.45)';
+  const mark = (x, y, size = 12) => (
+    <text x={x} y={y} textAnchor="middle" fill="var(--accent)" fontFamily="'JetBrains Mono',monospace" fontWeight="600" fontSize={size} letterSpacing="1">PTB</text>
+  );
+  if (type === 'tee-oversized') {
+    return (
+      <svg viewBox="0 0 160 180" width="62%" style={{ overflow: 'visible' }}>
+        <path d="M55,20 C65,14 95,14 105,20 L128,26 L152,54 L132,68 L108,50 L112,168 L48,168 L52,50 L28,68 L8,54 L32,26 Z" fill="none" stroke={stroke} strokeWidth="3" strokeLinejoin="round" />
+        {mark(80, 108)}
+      </svg>
+    );
+  }
+  if (type === 'tee-regular') {
+    return (
+      <svg viewBox="0 0 160 180" width="56%" style={{ overflow: 'visible' }}>
+        <path d="M60,20 C68,15 92,15 100,20 L116,24 L136,46 L118,58 L102,44 L106,168 L54,168 L58,44 L42,58 L24,46 L44,24 Z" fill="none" stroke={stroke} strokeWidth="3" strokeLinejoin="round" />
+        {mark(80, 100)}
+      </svg>
+    );
+  }
+  if (type === 'cap') {
+    return (
+      <svg viewBox="0 0 160 140" width="64%" style={{ overflow: 'visible' }}>
+        <path d="M25,88 Q35,22 82,20 Q128,22 138,85 Q82,102 25,88 Z" fill="none" stroke={stroke} strokeWidth="3" strokeLinejoin="round" />
+        <path d="M28,82 Q0,86 4,98 Q8,106 48,92 Z" fill="none" stroke={stroke} strokeWidth="3" strokeLinejoin="round" />
+        <circle cx="82" cy="20" r="4" fill={stroke} />
+        {mark(84, 60, 11)}
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 160 180" width="50%" style={{ overflow: 'visible' }}>
+      <path d="M55,15 L105,15 L105,95 L145,105 Q158,112 152,128 L120,148 Q108,152 100,140 L95,100 L55,100 Z" fill="none" stroke={stroke} strokeWidth="3" strokeLinejoin="round" />
+      <line x1="58" y1="26" x2="102" y2="26" stroke={stroke} strokeWidth="2" />
+      <line x1="58" y1="33" x2="102" y2="33" stroke={stroke} strokeWidth="2" />
+      <line x1="58" y1="40" x2="102" y2="40" stroke={stroke} strokeWidth="2" />
+      {mark(80, 60, 10)}
+    </svg>
+  );
+}
 
 const FOOTER_COLS = [
   { title: 'SHOP', links: ['Shop', 'Capsules', 'Merch'] },
@@ -189,7 +231,6 @@ export default function PTBHome() {
         .ptb-product-card{ background:var(--black); padding:22px; cursor:pointer; }
         .ptb-product-visual{ aspect-ratio:3/4; background:var(--graphite); margin-bottom:16px; display:flex; align-items:center; justify-content:center; transition:opacity .3s; }
         .ptb-product-card:hover .ptb-product-visual{ opacity:.7; }
-        .ptb-product-visual span{ font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--ash); letter-spacing:.08em; }
         .ptb-product-name{ font-size:.8rem; margin-bottom:4px; }
         .ptb-product-price{ font-size:.78rem; color:var(--ash); font-family:'JetBrains Mono',monospace; }
 
@@ -335,7 +376,7 @@ export default function PTBHome() {
         <div className="ptb-core-grid">
           {CORE_PRODUCTS.map(p => (
             <div key={p.name} className="ptb-product-card">
-              <div className="ptb-product-visual"><span>IMG</span></div>
+              <div className="ptb-product-visual"><ProductArt type={p.art} /></div>
               <div className="ptb-product-name">{p.name}</div>
               <div className="ptb-product-price">{p.price}</div>
             </div>
